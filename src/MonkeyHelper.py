@@ -195,10 +195,10 @@ class GestureReplayEvent(ReplayEvent):
     def __init__(self, trail):
         ReplayEvent.__init__(self, trail[0].timestamp)
         self.trail = trail
-    
+
 
 class GestureReplayEventWrapper(PipelineComponent):
-    """ Wrap a trail to be a GestureReplayEvent for MonkeyHelperReplayer 
+    """ Wrap a trail to be a GestureReplayEvent for MonkeyHelperReplayer
     """
     def next(self, specialEvent):
         pp = PipelineParcel()
@@ -230,8 +230,8 @@ class MonkeyHelperReplayer(Replayer):
             lastTimeStamp = specialEvent[count].timestamp
         self.setTimestamp(lastTimeStamp)
         return PipelineParcel()
-    
+
     def canAccept(self, replayEvent):
         return isinstance(replayEvent, GestureReplayEvent)
-    
-    
+
+

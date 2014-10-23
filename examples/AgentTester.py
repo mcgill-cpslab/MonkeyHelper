@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # Contributor(s):
 #   Mingyuan Xia
 #   Xinye Lin
@@ -49,10 +49,14 @@ print 'turn on cellular data status', test.turnOnCellularData()
 test = ScreenAgent(device)
 print 'current screen rotation status', test.getScreenRotationStatus()
 print 'current orientation', test.getOrientation()
+print test.changeOrientation()
 
 test = SystemStatusAgent(device)
 print 'current WIFI status', test.getWifiStatus()
 print 'current battery level', test.getBatteryLevel()
+print test.hasFile('')
+print test.hasFile('test.jar')
+print test.pushFile('test.jar')
 
 test = WifiAgent(device)
 print 'current WIFI status', test.getWiFiStatus()
@@ -61,3 +65,4 @@ sleep(5)
 print'turn off cellular data status',  test.turnOffWifi()
 sleep(5)
 print 'turn on cellular data status', test.turnOnWifi()
+

@@ -105,11 +105,12 @@ class LogcatAgent:
         for tp in filterTuples:
             cmd.append('%s:%s' % tp)
         return self.logcat(cmd)
-    
+
 
 class ScreenAgent:
     def __init__(self, device):
         self.device = device
+        self.ORIENTATION_SCRIPT=r'ChangeOrientationTest.jar'
 
     def getScreenRotationStatus(self):
         sysAgent = SystemStatusAgent(self.device)
@@ -119,20 +120,41 @@ class ScreenAgent:
         sysAgent = SystemStatusAgent(self.device)
         return sysAgent.getOrientation()
 
+    def hasOrientationScript(self):
+        sysAgent = SystemStatusAgent(self.device)
+        return sysAgent.hasFile(self.ORIENTATION_SCRIPT);
+
+    def changeOrientation(self):
+        sysAgent = SystemStatusAgent(self.device)
+        current=sysAgent.getOrientation()
+        if not self.hasOrientationScript():
+            pushChangeOrientationScript()
+        sysAgent.device.shell('uiautomator runtest '+sysAgent.SCRIPT_PATH+self.ORIENTATION_SCRIPT).encode('utf-8')
+        newStatus=sysAgent.getOrientation()
+        if current!=newStatus:
+            return True
+        else:
+            return False
+
+    def pushChangeOrientationScript(self):
+        sysAgent = SystemStatusAgent(self.device)
+        return sysAgent.pushFile(self.ORIENTATION_SCRIPT)
+
+
 class SnapshotAgent :
     def __init__(self, device):
         self.device = device
-        
+
     def takeSnapshot(self):
         ''' Return a snapshot object
         '''
         return self.device.takeSnapshot()
-    
+
     def saveSnapshot(self, snapshot, fileName):
         ''' Save a snapshot object to a png file
         '''
         snapshot.writeToFile(fileName,'png')
-        
+
     def compareSnapshots(self, snapshot1, snapshot2):
         ''' Check if two snapshot objects are the same
         '''
@@ -142,17 +164,17 @@ class SnapshotAgent :
         ''' Take a snapshot and check if it is the same as another one
         '''
         return self.compareSnapshots(self.takeSnapshot(), snapshotCheck)
-        
+
     def getSubSnapshot(self, snapshot, coordinates):
         ''' Get a region from a snapshort
         '''
         return snapshot.getSubImage(coordinates)
-    
+
     def loadSnapshot (self, fileName):
         ''' Load a snapshot object from a png file
         '''
         return self.device.loadImageFromFile(fileName)
-    
+
 
 class WifiAgent:
     def __init__(self, device):
@@ -193,11 +215,12 @@ class WifiAgent:
         else:
             print "Wifi status unchangable for now."
             return False
-        
+
 
 class SystemStatusAgent:
     def __init__(self, device):
         self.device = device
+        self.SCRIPT_PATH=r'/sdcard/'
 
     def getWifiStatus(self):
         """Possible status:
@@ -286,3 +309,24 @@ class SystemStatusAgent:
             print "Fail to acquire the battery level!"
             return False
 
+    def hasFile(self,fileName):
+        try:
+            if not fileName:
+                raise ValueError('File name is empty!')
+            msg = self.device.shell('ls ' + self.SCRIPT_PATH + fileName).encode('utf-8')
+            fileName=re.escape(fileName)
+            pat=re.compile(r'('+fileName+r')')
+            result = pat.findall(msg)[0]
+            if result:
+                return True
+            else:
+                return False
+        except Exception, e:
+            if isinstance(e,ValueError):
+                print e.message
+            else:
+                print "Checking file existence failed!"
+            return False
+#TODO need to fix pushFile and PullFile in MonkeyHelper.EMonkeyDevice first
+#    def pushFile(self,fileName):
+#        return self.device.pushFile(self.SCRIPT_PATH+fileName)
