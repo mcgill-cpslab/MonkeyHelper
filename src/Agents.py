@@ -111,6 +111,10 @@ class ScreenAgent:
     def __init__(self, device):
         self.device = device
         self.ORIENTATION_SCRIPT=r'ChangeOrientationTest.jar'
+        self.ORIENTATION_PACKAGE=r'edu.mcgill.lynxiayel.changeorientationtest'
+        self.ORIENTATION_CLASS=r'ChangeOrientationTest'
+        self.METHOD_CHANGE_RIGHT_DOWN=r'testChangeRightDown'
+        self.METHOD_CHANGE_LEFT_DOWN=r'testChangeLeftDown'
 
     def getScreenRotationStatus(self):
         sysAgent = SystemStatusAgent(self.device)
@@ -127,9 +131,30 @@ class ScreenAgent:
     def changeOrientation(self):
         sysAgent = SystemStatusAgent(self.device)
         current=sysAgent.getOrientation()
-        if not self.hasOrientationScript():
-            pushChangeOrientationScript()
+        self.prepareScript()
         sysAgent.device.shell('uiautomator runtest '+sysAgent.SCRIPT_PATH+self.ORIENTATION_SCRIPT).encode('utf-8')
+        newStatus=sysAgent.getOrientation()
+        if current!=newStatus:
+            return True
+        else:
+            return False
+
+    def changeRightDown(self):
+        sysAgent = SystemStatusAgent(self.device)
+        current=sysAgent.getOrientation()
+        self.prepareScript()
+        sysAgent.device.shell('uiautomator runtest '+sysAgent.SCRIPT_PATH+self.ORIENTATION_SCRIPT + ' -c ' + self.ORIENTATION_PACKAGE+'.'+self.ORIENTATION_CLASS+'#'+self.METHOD_CHANGE_RIGHT_DOWN).encode('utf-8')
+        newStatus=sysAgent.getOrientation()
+        if current!=newStatus:
+            return True
+        else:
+            return False
+
+    def changeLeftDown(self):
+        sysAgent = SystemStatusAgent(self.device)
+        current=sysAgent.getOrientation()
+        self.prepareScript()
+        sysAgent.device.shell('uiautomator runtest '+sysAgent.SCRIPT_PATH+self.ORIENTATION_SCRIPT + ' -c ' + self.ORIENTATION_PACKAGE+'.'+self.ORIENTATION_CLASS+'#'+self.METHOD_CHANGE_LEFT_DOWN).encode('utf-8')
         newStatus=sysAgent.getOrientation()
         if current!=newStatus:
             return True
@@ -139,6 +164,12 @@ class ScreenAgent:
     def pushChangeOrientationScript(self):
         sysAgent = SystemStatusAgent(self.device)
         return sysAgent.pushFile(self.ORIENTATION_SCRIPT)
+
+    def prepareScript(self):
+        if not self.hasOrientationScript():
+            self.pushChangeOrientationScript()
+        else:
+            pass
 
 
 class SnapshotAgent :
