@@ -110,9 +110,9 @@ class LogcatAgent:
 class ScreenAgent:
     def __init__(self, device):
         self.device = device
-        self.ORIENTATION_SCRIPT=r'ChangeOrientationTest.jar'
+        self.ORIENTATION_SCRIPT=r'AndroidTest.jar'
         self.ORIENTATION_PACKAGE=r'edu.mcgill.lynxiayel.changeorientationtest'
-        self.ORIENTATION_CLASS=r'ChangeOrientationTest'
+        self.ORIENTATION_CLASS=r'AndroidTest'
         self.METHOD_CHANGE_RIGHT_DOWN=r'testChangeRightDown'
         self.METHOD_CHANGE_LEFT_DOWN=r'testChangeLeftDown'
 
