@@ -183,10 +183,12 @@ class EMonkeyDevice:
         self.shell("am kill-all")
 
     def pushFile(self, path):
-        return self.shell("push " + path)
+        # TODO may not push the file to the right device
+        return _cmd(['push', path])
 
     def pullFile(self, devicePath, localPath):
-        return self.shell("pull %s %s" % (devicePath, localPath))
+        # TODO may not push the file to the right device
+        return _cmd(['pull', devicePath, localPath])
 
     def getSystemInfo(self):
         return {"android_version": self.getProperty("build.version.release")}
