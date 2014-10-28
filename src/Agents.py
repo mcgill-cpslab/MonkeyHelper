@@ -20,7 +20,9 @@
 #
 import re
 
+
 class CellularAgent:
+
     def __init__(self, device):
         self.device = device
 
@@ -58,6 +60,7 @@ class CellularAgent:
             self.turnOffCellularData()
         else:
             self.turnOnCellularData()
+
 
 class LogcatAgent:
     MAIN = 'main'
@@ -108,13 +111,15 @@ class LogcatAgent:
 
 
 class ScreenAgent:
+
     def __init__(self, device):
         self.device = device
-        self.ORIENTATION_SCRIPT=r'AndroidTest.jar'
-        self.ORIENTATION_PACKAGE=r'edu.mcgill.lynxiayel.changeorientationtest'
-        self.ORIENTATION_CLASS=r'AndroidTest'
-        self.METHOD_CHANGE_RIGHT_DOWN=r'testChangeRightDown'
-        self.METHOD_CHANGE_LEFT_DOWN=r'testChangeLeftDown'
+        self.METHOD_CHANGE_ORIENTATION = r'testChangeOrientation'
+        self.METHOD_CHANGE_RIGHT_DOWN = r'testChangeRightDown'
+        self.METHOD_CHANGE_LEFT_DOWN = r'testChangeLeftDown'
+        self.METHOD_FREEZE_ROTATION = r'testFreezeRotation'
+        self.METHOD_UNFREEZE_ROTATION = r'testUnfreezeRotation'
+        self.METHOD_TOGGLE_SCREEN = r'testToggleScreen'
 
     def getScreenRotationStatus(self):
         sysAgent = SystemStatusAgent(self.device)
@@ -124,55 +129,55 @@ class ScreenAgent:
         sysAgent = SystemStatusAgent(self.device)
         return sysAgent.getOrientation()
 
-    def hasOrientationScript(self):
-        sysAgent = SystemStatusAgent(self.device)
-        return sysAgent.hasFile(self.ORIENTATION_SCRIPT);
-
     def changeOrientation(self):
         sysAgent = SystemStatusAgent(self.device)
-        current=sysAgent.getOrientation()
-        self.prepareScript()
-        sysAgent.device.shell('uiautomator runtest '+sysAgent.SCRIPT_PATH+self.ORIENTATION_SCRIPT).encode('utf-8')
-        newStatus=sysAgent.getOrientation()
-        if current!=newStatus:
+        current = sysAgent.getOrientation()
+        sysAgent.testAndroidJarMethod(self.METHOD_CHANGE_ORIENTATION)
+        newStatus = sysAgent.getOrientation()
+        if current != newStatus:
             return True
         else:
             return False
 
     def changeRightDown(self):
         sysAgent = SystemStatusAgent(self.device)
-        current=sysAgent.getOrientation()
-        self.prepareScript()
-        sysAgent.device.shell('uiautomator runtest '+sysAgent.SCRIPT_PATH+self.ORIENTATION_SCRIPT + ' -c ' + self.ORIENTATION_PACKAGE+'.'+self.ORIENTATION_CLASS+'#'+self.METHOD_CHANGE_RIGHT_DOWN).encode('utf-8')
-        newStatus=sysAgent.getOrientation()
-        if current!=newStatus:
+        current = sysAgent.getOrientation()
+        sysAgent.testAndroidJarMethod(self.METHOD_CHANGE_RIGHT_DOWN)
+        newStatus = sysAgent.getOrientation()
+        if current != newStatus:
             return True
         else:
             return False
 
     def changeLeftDown(self):
         sysAgent = SystemStatusAgent(self.device)
-        current=sysAgent.getOrientation()
-        self.prepareScript()
-        sysAgent.device.shell('uiautomator runtest '+sysAgent.SCRIPT_PATH+self.ORIENTATION_SCRIPT + ' -c ' + self.ORIENTATION_PACKAGE+'.'+self.ORIENTATION_CLASS+'#'+self.METHOD_CHANGE_LEFT_DOWN).encode('utf-8')
-        newStatus=sysAgent.getOrientation()
-        if current!=newStatus:
+        current = sysAgent.getOrientation()
+        sysAgent.testAndroidJarMethod(self.METHOD_CHANGE_LEFT_DOWN)
+        newStatus = sysAgent.getOrientation()
+        if current != newStatus:
             return True
         else:
             return False
 
-    def pushChangeOrientationScript(self):
+    def freezeRotation(self):
         sysAgent = SystemStatusAgent(self.device)
-        return sysAgent.pushFile(self.ORIENTATION_SCRIPT)
+        sysAgent.testAndroidJarMethod(self.METHOD_FREEZE_ROTATION)
+        return sysAgent.getScreenRotationStatus() == 1
 
-    def prepareScript(self):
-        if not self.hasOrientationScript():
-            self.pushChangeOrientationScript()
-        else:
-            pass
+    def unfreezeRotation(self):
+        sysAgent = SystemStatusAgent(self.device)
+        sysAgent.testAndroidJarMethod(self.METHOD_UNFREEZE_ROTATION)
+        return sysAgent.getScreenRotationStatus() == 0
+
+    def toggleScreen(self):
+        sysAgent = SystemStatusAgent(self.device)
+        current = sysAgent.getScreenOnOffStatus()
+        sysAgent.testAndroidJarMethod(self.METHOD_TOGGLE_SCREEN)
+        return sysAgent.getScreenOnOffStatus() == current
 
 
-class SnapshotAgent :
+class SnapshotAgent:
+
     def __init__(self, device):
         self.device = device
 
@@ -184,7 +189,7 @@ class SnapshotAgent :
     def saveSnapshot(self, snapshot, fileName):
         ''' Save a snapshot object to a png file
         '''
-        snapshot.writeToFile(fileName,'png')
+        snapshot.writeToFile(fileName, 'png')
 
     def compareSnapshots(self, snapshot1, snapshot2):
         ''' Check if two snapshot objects are the same
@@ -201,13 +206,42 @@ class SnapshotAgent :
         '''
         return snapshot.getSubImage(coordinates)
 
-    def loadSnapshot (self, fileName):
+    def loadSnapshot(self, fileName):
         ''' Load a snapshot object from a png file
         '''
         return self.device.loadImageFromFile(fileName)
 
 
+class KeypressAgent:
+
+    def __init__(self, device):
+        self.device = device
+        self.METHOD_PRESS_BACK = r'testPressBack'
+        self.METHOD_PRESS_HOME = r'testPressHome'
+        self.METHOD_CLICK_XY = r'testClick'
+        self.METHOD_DRAG = r'testDrag'
+
+    def pressBack(self):
+        sysAgent = SystemStatusAgent(self.device)
+        sysAgent.testAndroidJarMethod(self.METHOD_PRESS_BACK)
+
+    def pressHome(self):
+        sysAgent = SystemStatusAgent(self.device)
+        sysAgent.testAndroidJarMethod(self.METHOD_PRESS_HOME)
+
+    def clickXY(self, x, y):
+        sysAgent = SystemStatusAgent(self.device)
+        sysAgent.testAndroidJarMethod(
+            self.METHOD_CLICK_XY + ' -e x ' + str(x) + ' -e y ' + str(y))
+
+    def drag(self, startX, startY, endX, endY, steps):
+        sysAgent = SystemStatusAgent(self.device)
+        sysAgent.testAndroidJarMethod(self.METHOD_DRAG + ' -e startX ' + str(startX) + ' -e startY ' + str(
+            startY) + ' -e endX ' + str(endX) + ' -e endY ' + str(endY) + ' -e steps ' + str(steps))
+
+
 class WifiAgent:
+
     def __init__(self, device):
         self.device = device
 
@@ -249,9 +283,16 @@ class WifiAgent:
 
 
 class SystemStatusAgent:
+
     def __init__(self, device):
         self.device = device
-        self.SCRIPT_PATH=r'/sdcard/'
+        self.SCRIPT_PATH = r'/sdcard/'
+        self.TEST_JAR = r'AndroidTest.jar'
+        self.TEST_PACKAGE = r'edu.mcgill.lynxiayel.androidtest'
+        self.TEST_CLASS = r'AndroidTest'
+        self.UIAUTOMATOR_TEST_PREFIX = 'uiautomator runtest ' + self.SCRIPT_PATH + \
+            self.TEST_JAR + ' -c ' + self.TEST_PACKAGE + \
+            '.' + self.TEST_CLASS + '#'
 
     def getWifiStatus(self):
         """Possible status:
@@ -306,6 +347,22 @@ class SystemStatusAgent:
             print "Fail to acquire screen rotation status!"
             return False
 
+    def getScreenOnOffStatus(self):
+        """Possible status
+           True - On
+           False - Off
+        """
+        msg = self.device.shell('dumpsys power').encode('utf-8')
+        pat = re.compile(r'mScreenOn=(true|false)')
+        try:
+            status = pat.findall(msg)[0]
+            if status in ['true', 'false']:
+                return status == 'true'
+            else:
+                raise Exception()
+        except Exception:
+            print "Fail to acquire screen On/Off status!"
+
     def getOrientation(self):
         """Possible status:
            0 - portrait
@@ -340,24 +397,43 @@ class SystemStatusAgent:
             print "Fail to acquire the battery level!"
             return False
 
-    def hasFile(self,fileName):
+    def hasFile(self, fileName):
         try:
             if not fileName:
                 raise ValueError('File name is empty!')
-            msg = self.device.shell('ls ' + self.SCRIPT_PATH + fileName).encode('utf-8')
-            fileName=re.escape(fileName)
-            pat=re.compile(r'('+fileName+r')')
+            msg = self.device.shell(
+                'ls ' + self.SCRIPT_PATH + fileName).encode('utf-8')
+            fileName = re.escape(fileName)
+            pat = re.compile(r'(' + fileName + r')')
             result = pat.findall(msg)[0]
             if result:
                 return True
             else:
                 return False
         except Exception, e:
-            if isinstance(e,ValueError):
+            if isinstance(e, ValueError):
                 print e.message
             else:
                 print "Checking file existence failed!"
             return False
-#TODO need to fix pushFile and PullFile in MonkeyHelper.EMonkeyDevice first
-#    def pushFile(self,fileName):
-#        return self.device.pushFile(self.SCRIPT_PATH+fileName)
+
+    def hasTestScript(self):
+        return self.hasFile(self.TEST_JAR)
+
+    def pushTestScript(self):
+        return self.pushFile(self.TEST_JAR)
+
+    def prepareScript(self):
+        if not self.hasTestScript():
+            self.pushTestScript()
+        else:
+            pass
+
+    def testAndroidJarMethod(self, methodName):
+        self.prepareScript()
+        self.device.shell(
+            self.UIAUTOMATOR_TEST_PREFIX + methodName).encode('utf-8')
+
+# TODO need to fx pushFile and PullFile in first
+    def pushFile(self, fileName):
+        return self.device.pushFile(self.SCRIPT_PATH + fileName)

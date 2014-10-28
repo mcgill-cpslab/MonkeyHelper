@@ -67,9 +67,21 @@ public class AndroidTest extends UiAutomatorTestCase {
 		d.unfreezeRotation();
 		d.waitForIdle();
 	}
-	
-	public boolean testClick(int x, int y) throws RemoteException {
+
+	public boolean testClick() throws RemoteException {
 		UiDevice d = getUiDevice();
-		return d.click(x,y);
-	} 
+		int x = Integer.parseInt(getParams().getString("x"));
+		int y = Integer.parseInt(getParams().getString("y"));
+		return d.click(x, y);
+	}
+
+	public boolean testDrag() throws RemoteException {
+		UiDevice d = getUiDevice();
+		int startX = Integer.parseInt(getParams().getString("startX"));
+		int startY = Integer.parseInt(getParams().getString("startY"));
+		int endX = Integer.parseInt(getParams().getString("endX"));
+		int endY = Integer.parseInt(getParams().getString("endY"));
+		int steps = Integer.parseInt(getParams().getString("steps"));
+		return d.drag(startX, startY, endX, endY, steps);
+	}
 }

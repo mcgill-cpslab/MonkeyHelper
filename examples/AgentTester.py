@@ -33,40 +33,53 @@ def module_path():
 sys.path.append(module_path())
 sys.path.append(os.path.join(module_path(), '..', 'src'))
 
-from Agents import CellularAgent, ScreenAgent, SystemStatusAgent, WifiAgent
+from Agents import CellularAgent, ScreenAgent, SystemStatusAgent, WifiAgent, KeypressAgent
 import DeviceManager
 from time import sleep
 
 device = DeviceManager.getDevice()
-test = CellularAgent(device)
-print 'current cellular data status', test.getCellularDataStatus()
-print 'toggle cellular data status', test.toggleCellularDataStatus()
-sleep(5)
-print 'turn off cellular data status', test.turnOffCellularData()
-sleep(5)
-print 'turn on cellular data status', test.turnOnCellularData()
-
-#print device.shell('uiautomator runtest /sdcard/ChangeOrientationTest.jar -c edu.mcgill.lynxiayel.changeorientationtest.ChangeOrientationTest#testChangeRightDown').encode('utf-8')
-#print os.system('adb shell uiautomator runtest /sdcard/ChangeOrientationTest.jar -c edu.mcgill.lynxiayel.changeorientationtest.ChangeOrientationTest#testChangeRightDown')
-test = ScreenAgent(device)
-print 'current screen rotation status', test.getScreenRotationStatus()
-print 'current orientation', test.getOrientation()
-print test.changeOrientation()
-print test.changeLeftDown()
-print test.changeRightDown()
-
-test = SystemStatusAgent(device)
-print 'current WIFI status', test.getWifiStatus()
-print 'current battery level', test.getBatteryLevel()
-print test.hasFile('')
-print test.hasFile('test.jar')
-print test.pushFile('test.jar')
-
-test = WifiAgent(device)
-print 'current WIFI status', test.getWiFiStatus()
-print 'toggle WIFI status', test.changeWifiStatus()
-sleep(5)
-print'turn off cellular data status',  test.turnOffWifi()
-sleep(5)
-print 'turn on cellular data status', test.turnOnWifi()
+#test = CellularAgent(device)
+#print 'current cellular data status', test.getCellularDataStatus()
+#print 'toggle cellular data status', test.toggleCellularDataStatus()
+#sleep(5)
+#print 'turn off cellular data status', test.turnOffCellularData()
+#sleep(5)
+#print 'turn on cellular data status', test.turnOnCellularData()
+#
+##print device.shell('uiautomator runtest /sdcard/ChangeOrientationTest.jar -c edu.mcgill.lynxiayel.changeorientationtest.ChangeOrientationTest#testChangeRightDown').encode('utf-8')
+##print os.system('adb shell uiautomator runtest /sdcard/ChangeOrientationTest.jar -c edu.mcgill.lynxiayel.changeorientationtest.ChangeOrientationTest#testChangeRightDown')
+#test = ScreenAgent(device)
+#print 'current screen rotation status', test.getScreenRotationStatus()
+#print 'current orientation', test.getOrientation()
+#print test.changeOrientation()
+#print test.changeOrientation()
+#print test.changeLeftDown()
+#print test.changeRightDown()
+#print test.toggleScreen()
+#print test.toggleScreen()
+#
+#test = KeypressAgent(device)
+#print test.clickXY(600,1500)
+#print "click done"
+#print test.drag(400,400,1000,1200,10)
+#print "drag done"
+#print test.pressBack()
+#print "back done"
+#print test.pressHome()
+#print "home done"
+#
+#test = SystemStatusAgent(device)
+#print 'current WIFI status', test.getWifiStatus()
+#print 'current battery level', test.getBatteryLevel()
+#print test.hasFile('')
+#print test.hasFile('test.jar')
+#print test.pushFile('test.jar')
+#
+#test = WifiAgent(device)
+#print 'current WIFI status', test.getWiFiStatus()
+#print 'toggle WIFI status', test.changeWifiStatus()
+#sleep(5)
+#print'turn off cellular data status',  test.turnOffWifi()
+#sleep(5)
+#print 'turn on cellular data status', test.turnOnWifi()
 
