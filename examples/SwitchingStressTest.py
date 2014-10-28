@@ -34,10 +34,9 @@ def module_path():
 sys.path.append(module_path())
 sys.path.append(os.path.join(module_path(), '..', 'src'))
 
-from MonkeyHelper import EMonkeyDevice
+import DeviceManager
 from Agents import LogcatAgent
 import time
-
 
 def main():
     """ This test launches a series of apps (with given package and main activity names)
@@ -45,14 +44,14 @@ def main():
     messages printed to logcat during the test.
     """
     # constants
-    APP_HOME = 'com.android.launcher/com.android.launcher2.Launcher'
-    APP_CLOCK = 'com.google.android.deskclock/com.android.deskclock.DeskClock'
+    APP_CLOCK = 'com.android.deskclock/com.android.deskclock.DeskClock'
+    APP_SETTINGS = 'com.android.settings/com.android.settings.Settings'
     # configurations
-    packages = [APP_CLOCK, APP_HOME]
+    packages = [APP_SETTINGS, APP_CLOCK]
     sleep_interval = 2
     repeats = 2
     app_tag = 'ActivityManager'
-    device = EMonkeyDevice()
+    device = DeviceManager.getDevice()
     agent = LogcatAgent(device)
     agent.clear()
     print 'Start launching stress test'

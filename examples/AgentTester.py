@@ -34,10 +34,10 @@ sys.path.append(module_path())
 sys.path.append(os.path.join(module_path(), '..', 'src'))
 
 from Agents import CellularAgent, ScreenAgent, SystemStatusAgent, WifiAgent
-from MonkeyHelper import EMonkeyDevice
+import DeviceManager
 from time import sleep
 
-device = EMonkeyDevice()
+device = DeviceManager.getDevice()
 test = CellularAgent(device)
 print 'current cellular data status', test.getCellularDataStatus()
 print 'toggle cellular data status', test.toggleCellularDataStatus()

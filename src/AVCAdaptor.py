@@ -17,18 +17,20 @@
 #   Mingyuan Xia
 #
 
-from adb.adbclient import AdbClient
+from androidviewclient.adbclient import AdbClient
+from androidviewclient.viewclient import ViewClient
+import androidviewclient.adbclient as U
 
 class AVCDevice:
     """ To control an AndroidViewClient-based device
     """
-    DOWN_AND_UP = AdbClient.DOWN_AND_UP
-    DOWN = AdbClient.DOWN
-    UP = AdbClient.UP
+    DOWN_AND_UP = U.DOWN_AND_UP
+    DOWN = U.DOWN
+    UP = U.UP
     # MOVE = AdbClient.MOVE
 
     def __init__(self, timeout = 5):
-        self.dev = AdbClient()
+        self.dev, self.serialno = ViewClient.connectToDeviceOrExit()
         self.displayWidth = int(self.getProperty("display.width"))
         self.displayHeight = int(self.getProperty("display.height"))
 
@@ -87,9 +89,8 @@ class AVCDevice:
     def startActivity(self, uri=None, action=None, data=None,
                       mimetype=None, categories=[], extras={},
                       component=None, flags=0):
-        #self.dev.startActivity(uri, action, data, mimetype, categories,
-        #                       extras, component, flags)
-        raise Exception('Unimplemented')
+        self.dev.startActivity(component, flags, uri)
+	return self
 
     def takeSnapshot(self):
         return self.dev.takeSnapshot()

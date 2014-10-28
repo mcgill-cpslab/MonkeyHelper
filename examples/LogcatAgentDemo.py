@@ -23,17 +23,15 @@ monkeyrunner to run scripts once including this module
 
 import os, sys, inspect
 
-
 def module_path():
     ''' returns the module path without the use of __file__.
     from http://stackoverflow.com/questions/729583/getting-file-path-of-imported-module'''
     return os.path.abspath(os.path.dirname(inspect.getsourcefile(module_path)))
 
-
-sys.path.append(module_path())
 sys.path.append(os.path.join(module_path(), '..', 'src'))
+sys.path.append(module_path())
 
-from MonkeyHelper import EMonkeyDevice
+import DeviceManager
 from Agents import LogcatAgent
 import time
 
@@ -42,7 +40,7 @@ def main():
     After 5 seconds, it dumps all messages and finishes.
     Note that logcat encodes its output with utf-8
     """
-    device = EMonkeyDevice()
+    device = DeviceManager.getDevice()
     agent = LogcatAgent(device)
     print agent.dump(fmt=None, filterTuples=[('*', 'E')])
     agent.clear()
