@@ -20,6 +20,7 @@
 from androidviewclient.adbclient import AdbClient
 from androidviewclient.viewclient import ViewClient
 import androidviewclient.adbclient as U
+import time
 
 class AVCDevice:
     """ To control an AndroidViewClient-based device
@@ -125,8 +126,8 @@ class AVCDevice:
         self.unlock()
         return self
 
-    def sleep(self, seconds):
-        time.sleep(seconds)
+    def sleep(self, milliseconds):
+        time.sleep(milliseconds/1000)
         return self
 
     def getInstalledPackage(self):

@@ -23,10 +23,12 @@ This module provides a component to inject hesenbugs into the replay trace
 
 import random
 from Pipeline import PipelineParcel, PipelineComponent
-from Agents import CellularAgent, WifiAgent
+from Agents import CellularAgent, WifiAgent, ScreenAgent, KeypressAgent
 from Replayer import Replayer, ReplayEvent
 
+
 class SpecialEvent(ReplayEvent):
+
     def __init__(self, name, timestamp):
         ReplayEvent.__init__(self, timestamp)
         self.name = name
@@ -39,41 +41,47 @@ class SpecialEvent(ReplayEvent):
 
 
 class TroubleInjector(PipelineComponent):
+
     """Inject random events into the replay trace,
     the randomness of these events are controlled by a seed, thus reproducible
     """
 
-    def __init__(self, seed='WTF', specialEvents=['wifi', 'cellular'], number=25):
+    def __init__(self, seed='WTF', specialEvents=['wifi', 'cellular', 'toggleScreen', 'rotateScreen', 'pressBack', 'pressHome'], number=25):
         """SpecialEvents is a list containing the names of all possible special events.
             current possible special events:
                 wifi
                 cellular
-
+                toggleScreen
+                rotateScreen
+                pressBack
+                pressHome
         """
         random.seed(seed)
-        seq=specialEvents * (number/len(specialEvents)+1)
+        seq = specialEvents * (number / len(specialEvents) + 1)
         self.randomSeries = random.sample(seq, number)
-        self.insertChoice=[]
-        while self.insertChoice.count(True)<number:
-            self.insertChoice.extend(random.sample([True,False],1))
+        self.insertChoice = []
+        while self.insertChoice.count(True) < number:
+            self.insertChoice.extend(random.sample([True, False], 1))
         self.prevGesture = None
         self.idx = 0
-        self.insertionIdx=0
+        self.insertionIdx = 0
         self.parcel = PipelineParcel()
 
     def next(self, gestureEvent):
         """read in the trails and inject special events
         """
         if self.prevGesture:
-            if self.idx <= len(self.randomSeries):
+            if self.idx < len(self.randomSeries):
                 if self.insertChoice[self.insertionIdx]:
-                    timestamp = (self.prevGesture.timestamp + gestureEvent.timestamp) / 2
-                    injection = SpecialEvent(self.randomSeries[self.idx], timestamp)
+                    timestamp = (
+                        self.prevGesture.timestamp + gestureEvent.timestamp) / 2
+                    injection = SpecialEvent(
+                        self.randomSeries[self.idx], timestamp)
                     self.parcel.enqueue(injection)
                     self.idx = self.idx + 1
                 else:
                     pass
-                self.insertionIdx=self.insertionIdx+1
+                self.insertionIdx = self.insertionIdx + 1
             else:
                 pass
         else:
@@ -84,9 +92,10 @@ class TroubleInjector(PipelineComponent):
 
     def handleEOF(self):
         return self.parcel
-    
+
 
 class TroubleReplayer(Replayer):
+
     """Replay finger trails with Heisenbug events injected in between
     """
 
@@ -95,22 +104,45 @@ class TroubleReplayer(Replayer):
         self.device = dev
         self.wifiAgent = WifiAgent(self.device)
         self.cellularAgent = CellularAgent(self.device)
+        self.screenAgent = ScreenAgent(self.device)
+        self.keypressAgent = KeypressAgent(self.device)
 
     def next(self, specialEvent):
-        name = specialEvent.getName()
-        lastTimeStamp = self.getTimestamp()
-        if specialEvent.timestamp>lastTimeStamp:
-            self.device.sleep(specialEvent.timestamp - lastTimeStamp)
-        else:
-            pass
+        if self.canAccept(specialEvent):
+            name = specialEvent.getName()
+            lastTimeStamp = self.getTimestamp()
+            if specialEvent.timestamp > lastTimeStamp:
+                print lastTimeStamp
+                print specialEvent.timestamp
+                self.device.sleep(specialEvent.timestamp - lastTimeStamp)
+            else:
+                pass
+            self.unitReplay(name)
+            self.setTimestamp(specialEvent.timestamp)
+        elif isinstance(specialEvent,ReplayEvent):
+            self.setTimestamp(specialEvent.timestamp)
+            print self.getTimestamp()
+        return PipelineParcel()
+
+    def canAccept(self, replayEvent):
+        return isinstance(replayEvent, SpecialEvent)
+
+    def unitReplay(self, name):
+        print 'Injecting ' + name + ' event'
         if name == 'wifi':
-            print 'Injecting wifi event'
             self.wifiAgent.changeWifiStatus()
         elif name == 'cellular':
             self.cellularAgent.toggleCellularDataStatus()
-            print 'Injecting cellular event'
-        self.setTimestamp(specialEvent.timestamp)
-        return PipelineParcel()
-    
-    def canAccept(self, replayEvent):
-        return isinstance(replayEvent, SpecialEvent)
+        elif name == 'toggleScreen':
+            self.screenAgent.toggleScreen()
+            #toggle twice to get back to original screen state
+            self.screenAgent.toggleScreen()
+        elif name == 'rotateScreen':
+            self.screenAgent.changeOrientation()
+            #rotate twice to get back to original screen orientation
+            self.device.sleep(2000)
+            self.screenAgent.changeOrientation()
+        elif name == 'pressBack':
+            self.keypressAgent.pressBack()
+        elif name == 'pressHome':
+            self.keypressAgent.pressHome()

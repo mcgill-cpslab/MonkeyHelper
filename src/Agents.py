@@ -30,7 +30,7 @@ class CellularAgent:
         """ Turn on cellular data service (need root access)
         """
         try:
-            self.device.shell('root')
+            self.device.shell('su')
             self.device.shell('svc data enable')
             return True
         except:
@@ -41,7 +41,7 @@ class CellularAgent:
         """ Turn off cellular data service (need root access)
         """
         try:
-            self.device.shell('root')
+            self.device.shell('su')
             self.device.shell('svc data disable')
             return True
         except:
@@ -249,7 +249,7 @@ class WifiAgent:
         """ Need root access
         """
         try:
-            self.device.shell('root')
+            self.device.shell('su')
             self.device.shell('svc wifi enable')
             return True
         except:
@@ -260,7 +260,7 @@ class WifiAgent:
         """ Need root access
         """
         try:
-            self.device.shell('root')
+            self.device.shell('su')
             self.device.shell('svc wifi disable')
             return True
         except:
