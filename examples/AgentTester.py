@@ -61,7 +61,7 @@ device = DeviceManager.getDevice()
 #test = KeypressAgent(device)
 #print test.clickXY(600,1500)
 #print "click done"
-#print test.drag(400,400,1000,1200,10)
+#print test.drag(610,610,820,1220,10)
 #print "drag done"
 #print test.pressBack()
 #print "back done"
