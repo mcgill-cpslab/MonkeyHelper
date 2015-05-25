@@ -56,10 +56,12 @@ def main():
     # this step might be necessary for a tablet
     # pl.addStep(dtm.TrailScaler(0.8,0.8))
     # pl.addStep(dtm.TimeScaler(0.25))
-    pl.addStep(TroubleInjector())
+    # trouble maker
+    # pl.addStep(TroubleInjector())
     dev = EMonkeyDevice()
-    replayers = [MonkeyHelperReplayer(dev), TroubleReplayer(dev)]
-    pl.addStep(CompositeReplayer(replayers))
+    #replayers = [MonkeyHelperReplayer(dev), TroubleReplayer(dev)]
+    #pl.addStep(CompositeReplayer(replayers))
+    pl.addStep(MonkeyHelperReplayer(dev))
     pl.addStep(dtm.GenericPrinter())
     pl.execute()
     print "Replay finished"

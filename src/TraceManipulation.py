@@ -23,7 +23,7 @@ collected from Android devices.
 """
 
 import re, sys
-from Pipeline import PipelineParcel, PipelineComponent
+from Pipeline import PipelineParcel, PipelineComponent, Pipeline
 
 
 class MotionEvent:
@@ -272,6 +272,13 @@ class FingerDecomposer(PipelineComponent):
         parcel = PipelineParcel()
         for specialEvent in prev.values():
             parcel.enqueue(specialEvent)
+        return parcel
+    def handleEOF(self):
+        parcel = PipelineParcel()
+        for e in self.tracker.values():
+            parcel.enqueue(e)
+        self.tracker = {}
+        parcel.enqueue(Pipeline.EOF)
         return parcel
 
 
