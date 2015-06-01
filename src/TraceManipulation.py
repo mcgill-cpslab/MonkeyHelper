@@ -101,12 +101,12 @@ class MultiTouchTypeAParser(PipelineComponent):
             elif geteventCmd.evCmd == "ABS_MISC":
                 self.dontReport = True
             else:
-                print "[WARN] Type A MT meets unknown evCmd" + str(geteventCmd)
+                print("[WARN] Type A MT meets unknown evCmd" + str(geteventCmd))
         elif geteventCmd.evType == "EV_KEY":
             if geteventCmd.evCmd == "BTN_TOUCH":
-                print "[WARN] TypeA MT ignores BTN_TOUCH"
+                print("[WARN] TypeA MT ignores BTN_TOUCH")
             else:
-                print "[WARN] TYPEA MT meets unknown evCmd" + str(geteventCmd)
+                print("[WARN] TypeA MT meets unknown evCmd" + str(geteventCmd))
         elif geteventCmd.evType == "EV_SYN":
             if geteventCmd.evCmd == "SYN_REPORT":
                 if self.currentSlot is not None:
@@ -124,9 +124,9 @@ class MultiTouchTypeAParser(PipelineComponent):
                     self.listMotions.append(self.currentSlot)
                     self.currentSlot = None
             else:
-                print "[WARN] Type A MT meets unknown evCmd" + str(geteventCmd)
+                print("[WARN] TypeA MT meets unknown evCmd" + str(geteventCmd))
         else:
-            print "[WARN] Type A MT skips unknown line:" + str(geteventCmd)
+            print("[WARN] TypeA MT skips unknown line:" + str(geteventCmd))
         return parcel
 
 
@@ -173,7 +173,7 @@ class MultiTouchTypeBParser(PipelineComponent):
             elif geteventCmd.evCmd == "ABS_MT_TOUCH_MAJOR":
                 self.currentSlot.touch_major = geteventCmd.evVal
             else:
-                print "[WARN] Type B MT meets unknown evCmd" + str(geteventCmd)
+                print("[WARN] Type B MT meets unknown evCmd" + str(geteventCmd))
         elif geteventCmd.evType == "EV_SYN":
             if geteventCmd.evCmd == "SYN_REPORT":
                 for motionEvent in self.slots:
@@ -181,9 +181,9 @@ class MultiTouchTypeBParser(PipelineComponent):
                         motionEvent.timestamp = geteventCmd.timestamp
                         parcel.enqueue(motionEvent)
             else:
-                print "[WARN] Type B MT meets unknown evCmd" + str(geteventCmd)
+                print("[WARN] Type B MT meets unknown evCmd" + str(geteventCmd))
         else:
-            print "[WARN] Type B MT skips unknown line:" + str(geteventCmd)
+            print("[WARN] Type B MT skips unknown line:" + str(geteventCmd))
         return parcel
 
 
@@ -194,7 +194,7 @@ class GenericPrinter(PipelineComponent):
     def next(self, whatever):
         """ Takes whatever object and print its string representation
         """
-        print str(whatever)
+        print(str(whatever))
         return PipelineParcel()
 
 
@@ -232,7 +232,7 @@ class RawTraceParser(PipelineComponent):
         m = self.pattern.match(line)
         e = GeteventCommand()
         if m is None:
-            print "[ERROR] unidentified raw trace line:" + line
+            print("[ERROR] unidentified raw trace line:" + line)
             sys.exit()
         e.timestamp = float(m.group(1))
         e.evType = m.group(2)

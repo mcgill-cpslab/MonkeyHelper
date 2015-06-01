@@ -112,8 +112,8 @@ class TroubleReplayer(Replayer):
             name = specialEvent.getName()
             lastTimeStamp = self.getTimestamp()
             if specialEvent.timestamp > lastTimeStamp:
-                print lastTimeStamp
-                print specialEvent.timestamp
+                print(lastTimeStamp)
+                print(specialEvent.timestamp)
                 self.device.sleep(specialEvent.timestamp - lastTimeStamp)
             else:
                 pass
@@ -121,14 +121,14 @@ class TroubleReplayer(Replayer):
             self.setTimestamp(specialEvent.timestamp)
         elif isinstance(specialEvent,ReplayEvent):
             self.setTimestamp(specialEvent.timestamp)
-            print self.getTimestamp()
+            print(self.getTimestamp())
         return PipelineParcel()
 
     def canAccept(self, replayEvent):
         return isinstance(replayEvent, SpecialEvent)
 
     def unitReplay(self, name):
-        print 'Injecting ' + name + ' event'
+        print('Injecting ' + name + ' event')
         if name == 'wifi':
             self.wifiAgent.changeWifiStatus()
         elif name == 'cellular':

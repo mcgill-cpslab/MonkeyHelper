@@ -221,7 +221,7 @@ class MonkeyHelperReplayer(Replayer):
         specialEvent = gestureReplayEvent.trail
         lastTimeStamp = self.getTimestamp()
         if len(specialEvent) <= 0:
-            print "[WARN] perform an empty specialEvent"
+            print("[WARN] perform an empty specialEvent")
         elif len(specialEvent) == 1:
             actions = [EMonkeyDevice.DOWN_AND_UP]
         else:

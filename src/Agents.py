@@ -34,7 +34,7 @@ class CellularAgent:
             self.device.shell('svc data enable')
             return True
         except:
-            print "Failed to turn on the cellular data."
+            print("Failed to turn on the cellular data.")
             return False
 
     def turnOffCellularData(self):
@@ -45,7 +45,7 @@ class CellularAgent:
             self.device.shell('svc data disable')
             return True
         except:
-            print "Failed to turn off the cellular data."
+            print("Failed to turn off the cellular data.")
             return False
 
     def getCellularDataStatus(self):
@@ -253,7 +253,7 @@ class WifiAgent:
             self.device.shell('svc wifi enable')
             return True
         except:
-            print "Failed to turn on the Wifi."
+            print("Failed to turn on the Wifi.")
             return False
 
     def turnOffWifi(self):
@@ -264,7 +264,7 @@ class WifiAgent:
             self.device.shell('svc wifi disable')
             return True
         except:
-            print "Failed to turn off the Wifi."
+            print("Failed to turn off the Wifi.")
             return False
 
     def getWiFiStatus(self):
@@ -278,7 +278,7 @@ class WifiAgent:
         elif status == 'disabled':
             return self.turnOnWifi()
         else:
-            print "Wifi status unchangable for now."
+            print("Wifi status unchangable for now.")
             return False
 
 
@@ -307,7 +307,7 @@ class SystemStatusAgent:
             else:
                 raise Exception()
         except Exception:
-            print "Fail to acquire WiFi status!"
+            print("Fail to acquire WiFi status!")
             return False
 
     def getCellularDataStatus(self):
@@ -327,7 +327,7 @@ class SystemStatusAgent:
             else:
                 raise Exception()
         except Exception:
-            print "Fail to acquire Cellular data connection status!"
+            print("Fail to acquire Cellular data connection status!")
             return False
 
     def getScreenRotationStatus(self):
@@ -344,7 +344,7 @@ class SystemStatusAgent:
             else:
                 raise Exception()
         except Exception:
-            print "Fail to acquire screen rotation status!"
+            print("Fail to acquire screen rotation status!")
             return False
 
     def getScreenOnOffStatus(self):
@@ -361,7 +361,7 @@ class SystemStatusAgent:
             else:
                 raise Exception()
         except Exception:
-            print "Fail to acquire screen On/Off status!"
+            print("Fail to acquire screen On/Off status!")
 
     def getOrientation(self):
         """Possible status:
@@ -379,7 +379,7 @@ class SystemStatusAgent:
             else:
                 raise Exception()
         except Exception:
-            print "Fail to acquire screen orientation!"
+            print("Fail to acquire screen orientation!")
             return False
 
     def getBatteryLevel(self):
@@ -394,7 +394,7 @@ class SystemStatusAgent:
             else:
                 raise Exception()
         except Exception:
-            print "Fail to acquire the battery level!"
+            print("Fail to acquire the battery level!")
             return False
 
     def hasFile(self, fileName):
@@ -412,9 +412,9 @@ class SystemStatusAgent:
                 return False
         except Exception, e:
             if isinstance(e, ValueError):
-                print e.message
+                print(e.message)
             else:
-                print "Checking file existence failed!"
+                print("Checking file existence failed!")
             return False
 
     def hasTestScript(self):
