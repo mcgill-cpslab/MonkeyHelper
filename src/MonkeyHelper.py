@@ -192,6 +192,18 @@ class EMonkeyDevice:
 
     def getSystemInfo(self):
         return {"android_version": self.getProperty("build.version.release")}
+    
+    def getEvdevLimits(self, attrib, evdev = "/dev/input/event0"):
+        raw = str(self.shell("getevent -lp " + evdev))
+        for line in raw.split('\n'):
+            if attrib in line:
+                s = line[line.rfind(':')+1:]
+                l = [m.strip() for m in s.split(',')]
+                d = {}
+                for m in l:
+                    d[m.split(' ')[0]] = int(m.split(' ')[1])
+                return d
+                
 
 class GestureReplayEvent(ReplayEvent):
     def __init__(self, trail):

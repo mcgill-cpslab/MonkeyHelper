@@ -186,6 +186,27 @@ class MultiTouchTypeBParser(PipelineComponent):
             print("[WARN] Type B MT skips unknown line:" + str(geteventCmd))
         return parcel
 
+class DeviceAdjuster(PipelineComponent):
+    """ The adjuster will map evdev coordinate system to pixels
+    """
+    def __init__(self, dev):
+        self.dev = dev
+        xm = dev.getEvdevLimits("ABS_MT_POSITION_X")
+        ym = dev.getEvdevLimits("ABS_MT_POSITION_Y")
+        self.xmin = xm["min"]
+        self.xmax = xm["max"]
+        self.ymin = ym["min"]
+        self.ymax = ym["max"]
+
+    def next(self, listMotionEvent):
+        """ Take a stream a motion events and produce adjusted motion events
+        """
+        parcel = PipelineParcel()
+        for e in listMotionEvent:
+            e.x = (e.x - self.xmin) * self.dev.displayWidth / (self.xmax - self.xmin)
+            e.y = (e.y - self.ymin) * self.dev.displayHeight / (self.ymax - self.ymin)
+        parcel.enqueue(listMotionEvent)
+        return parcel
 
 class GenericPrinter(PipelineComponent):
     """ A generic printer, print whatever given

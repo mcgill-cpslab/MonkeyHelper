@@ -51,6 +51,8 @@ def main():
     pl.addStep(dtm.RawTraceParser())
     pl.addStep(dtm.MultiTouchTypeAParser())
     pl.addStep(dtm.RelativeTimingConverter())
+    dev = EMonkeyDevice()
+    pl.addStep(dtm.DeviceAdjuster(dev))
     pl.addStep(dtm.FingerDecomposer())
     pl.addStep(GestureReplayEventWrapper())
     # this step might be necessary for a tablet
@@ -58,7 +60,6 @@ def main():
     # pl.addStep(dtm.TimeScaler(0.25))
     # trouble maker
     # pl.addStep(TroubleInjector())
-    dev = EMonkeyDevice()
     #replayers = [MonkeyHelperReplayer(dev), TroubleReplayer(dev)]
     #pl.addStep(CompositeReplayer(replayers))
     pl.addStep(MonkeyHelperReplayer(dev))
