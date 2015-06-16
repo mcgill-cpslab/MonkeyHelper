@@ -1,0 +1,3 @@
+[submodule "uiautomator"]
+	path = uiautomator
+	url = https://github.com/mingyuan-xia/uiautomator
